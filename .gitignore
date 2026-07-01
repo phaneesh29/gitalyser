@@ -1,0 +1,3 @@
+# AI agent tooling (reproducible via `npx skills add`)
+.agents/
+skills-lock.json
