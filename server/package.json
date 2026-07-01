@@ -6,10 +6,16 @@
     "build": "tsc"
   },
   "dependencies": {
-    "hono": "^4.12.27"
+    "@hono/zod-validator": "^0.8.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.12.27",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   }
