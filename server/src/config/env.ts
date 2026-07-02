@@ -7,7 +7,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
-  BETTER_AUTH_SECRET: z.string(),
+  BETTER_AUTH_SECRET: z.string().min(32, { message: 'BETTER_AUTH_SECRET must be at least 32 characters' }),
   BETTER_AUTH_URL: z.url(),
   UPSTASH_REDIS_REST_URL: z.url(),
   UPSTASH_REDIS_REST_TOKEN: z.string(),

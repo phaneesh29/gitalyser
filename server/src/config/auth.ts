@@ -3,7 +3,7 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { db } from "../db/index.js";
 import { env } from "./env.js";
 
-const trustedOrigins = env.CORS_ORIGIN === "*" ? [] : [env.CORS_ORIGIN];
+const trustedOrigins = [env.CORS_ORIGIN];
 
 export const auth = betterAuth({
   appName: "Gitalyser",
