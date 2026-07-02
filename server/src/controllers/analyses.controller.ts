@@ -1,7 +1,5 @@
 import { createFactory, createMiddleware } from 'hono/factory';
-import { zValidator } from '@hono/zod-validator';
 import { and, count, desc, eq, sql } from 'drizzle-orm';
-import { createAnalysisSchema, idParamSchema } from '../schemas/analysis.schema.js';
 import { randomUUID } from 'node:crypto';
 import type { Context } from 'hono';
 
@@ -41,11 +39,10 @@ export function withAnalysisType(type: AnalysisType) {
 }
 
 export const createAnalysis = factory.createHandlers(
-  zValidator('json', createAnalysisSchema),
   async (c) => {
     const user = c.get('user');
     const analysisType = c.get('analysisType');
-    const { input } = c.req.valid('json');
+    const { input } = c.req.valid('json' as never) as { input: string };
 
     try {
       const { owner, repo } = parseRepoInput(input);
@@ -138,11 +135,10 @@ export const listAnalyses = factory.createHandlers(async (c) => {
 });
 
 export const getAnalysis = factory.createHandlers(
-  zValidator('param', idParamSchema),
   async (c) => {
   const user = c.get('user');
   const analysisType = c.get('analysisType');
-  const { id } = c.req.valid('param');
+  const { id } = c.req.valid('param' as never) as { id: string };
 
   const [row] = await db
     .select()
@@ -159,11 +155,10 @@ export const getAnalysis = factory.createHandlers(
 
 
 export const refreshAnalysis = factory.createHandlers(
-  zValidator('param', idParamSchema),
   async (c) => {
   const user = c.get('user');
   const analysisType = c.get('analysisType');
-  const { id } = c.req.valid('param');
+  const { id } = c.req.valid('param' as never) as { id: string };
 
   const [row] = await db
     .select({ id: analysis.id, gitRepo: analysis.gitRepo })
@@ -193,11 +188,10 @@ export const refreshAnalysis = factory.createHandlers(
 });
 
 export const deleteAnalysis = factory.createHandlers(
-  zValidator('param', idParamSchema),
   async (c) => {
   const user = c.get('user');
   const analysisType = c.get('analysisType');
-  const { id } = c.req.valid('param');
+  const { id } = c.req.valid('param' as never) as { id: string };
 
   const deleted = await db
     .delete(analysis)
