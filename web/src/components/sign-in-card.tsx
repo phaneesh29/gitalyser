@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -24,8 +26,13 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function SignInCard() {
   const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   async function handleSignIn() {
+    if (!termsAccepted) {
+      toast.error("You must accept the Terms & Conditions and Privacy Policy");
+      return;
+    }
     setLoading(true);
     await signIn.social(
       {
@@ -52,7 +59,34 @@ export function SignInCard() {
           Connect your GitHub account to start analysing repositories.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
+        <div className="flex items-start space-x-2">
+          <Checkbox 
+            id="terms" 
+            checked={termsAccepted}
+            onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+            disabled={loading}
+          />
+          <div className="grid gap-1.5 leading-none">
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Accept terms and conditions
+            </label>
+            <p className="text-sm text-muted-foreground">
+              By continuing, you agree to our{" "}
+              <Link href="/terms" className="underline hover:text-primary">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="underline hover:text-primary">
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
         <Button
           className="w-full"
           size="lg"

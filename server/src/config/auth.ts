@@ -24,6 +24,27 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
     },
+    additionalFields: {
+      termsAccepted: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+      },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          return {
+            data: {
+              ...user,
+              termsAccepted: true,
+            },
+          };
+        },
+      },
+    },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7,

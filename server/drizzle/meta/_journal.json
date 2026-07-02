@@ -8,6 +8,13 @@
       "when": 1782913635147,
       "tag": "0000_chemical_spencer_smythe",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782982314078,
+      "tag": "0001_redundant_nomad",
+      "breakpoints": true
     }
   ]
 }
