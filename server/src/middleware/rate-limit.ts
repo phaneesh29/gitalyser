@@ -7,7 +7,7 @@ import { redis } from '../config/redis.js';
 const ratelimit = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.slidingWindow(100, '15 m'),
-  ephemeralCache: new Map(), // Optional: adds a local cache to reduce Redis queries
+  ephemeralCache: new Map(),
   analytics: true,
 });
 export const rateLimiter = createMiddleware(async (c, next) => {
