@@ -20,6 +20,11 @@ export const auth = betterAuth({
       trustedProviders: ["github"],
     },
   },
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
