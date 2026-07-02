@@ -43,7 +43,7 @@ export function ProfileCard({ user }: { user: User }) {
       .toUpperCase() || "?";
 
   return (
-    <Card>
+    <Card className="shadow-card">
       <CardHeader>
         <div className="flex items-center gap-4">
           <Avatar className="size-12">
@@ -51,7 +51,9 @@ export function ProfileCard({ user }: { user: User }) {
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <CardTitle className="truncate">{user.name}</CardTitle>
+            <CardTitle className="truncate text-base tracking-[-0.01em]">
+              {user.name}
+            </CardTitle>
             <p className="truncate text-sm text-muted-foreground">
               {user.email}
             </p>
@@ -64,8 +66,10 @@ export function ProfileCard({ user }: { user: User }) {
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent className="text-xs text-muted-foreground">
-        {user.emailVerified ? "Email verified" : "Email not verified"}
+      <CardContent>
+        <span className="eyebrow">
+          {user.emailVerified ? "Email verified" : "Email not verified"}
+        </span>
       </CardContent>
     </Card>
   );

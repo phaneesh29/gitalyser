@@ -30,7 +30,7 @@ export function SignInCard() {
     await signIn.social(
       {
         provider: "github",
-        callbackURL: window.location.origin,
+        callbackURL: `${window.location.origin}/dashboard`,
       },
       {
         onError: ({ error }) => {
@@ -42,11 +42,14 @@ export function SignInCard() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="relative z-10 w-full max-w-md gap-6 py-8 shadow-float">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome to Gitalyser</CardTitle>
-        <CardDescription>
-          Sign in with GitHub to analyse repositories and manage your account.
+        <p className="eyebrow mb-3">Gitalyser</p>
+        <CardTitle className="text-2xl tracking-[-0.04em]">
+          Sign in to continue.
+        </CardTitle>
+        <CardDescription className="text-balance">
+          Connect your GitHub account to start analysing repositories.
         </CardDescription>
       </CardHeader>
       <CardContent>

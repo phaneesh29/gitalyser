@@ -74,9 +74,10 @@ export function SessionsCard({ currentToken }: { currentToken: string }) {
   const otherCount = sessions?.filter((s) => s.token !== currentToken).length ?? 0;
 
   return (
-    <Card>
+    <Card className="shadow-card">
       <CardHeader>
-        <CardTitle>Active devices</CardTitle>
+        <span className="eyebrow mb-1">Security</span>
+        <CardTitle className="tracking-[-0.01em]">Active devices</CardTitle>
         <CardDescription>
           Sessions currently signed in to your account.
         </CardDescription>
@@ -108,7 +109,7 @@ export function SessionsCard({ currentToken }: { currentToken: string }) {
                       </span>
                       {isCurrent && <Badge variant="secondary">This device</Badge>}
                     </div>
-                    <p className="truncate text-xs text-muted-foreground">
+                    <p className="truncate font-mono text-xs text-[#888]">
                       {s.ipAddress || "unknown IP"} · signed in{" "}
                       {new Date(s.createdAt).toLocaleString()}
                     </p>

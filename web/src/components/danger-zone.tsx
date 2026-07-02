@@ -41,9 +41,12 @@ export function DangerZone() {
   }
 
   return (
-    <Card className="border-destructive/40">
+    <Card className="shadow-card ring-destructive/20">
       <CardHeader>
-        <CardTitle className="text-destructive">Danger zone</CardTitle>
+        <span className="eyebrow mb-1 text-destructive/70">Danger</span>
+        <CardTitle className="tracking-[-0.01em] text-destructive">
+          Danger zone
+        </CardTitle>
         <CardDescription>
           Permanently delete your account and all associated data. This cannot
           be undone.

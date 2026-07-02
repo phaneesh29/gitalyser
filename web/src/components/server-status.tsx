@@ -52,13 +52,13 @@ export function ServerStatus() {
         : `Server unreachable · ${state.message}`;
 
   return (
-    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+    <div className="flex items-center gap-2 font-mono text-xs text-[#888]">
       <span
         className={cn(
           "size-2 rounded-full",
-          state.kind === "loading" && "bg-amber-400 animate-pulse",
+          state.kind === "loading" && "bg-warning animate-pulse",
           online && "bg-emerald-500",
-          state.kind === "error" && "bg-red-500",
+          state.kind === "error" && "bg-destructive",
         )}
       />
       {label}
