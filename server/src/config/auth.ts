@@ -3,27 +3,42 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { db } from "../db/index.js";
 import { env } from "./env.js";
 
+const trustedOrigins = env.CORS_ORIGIN === "*" ? [] : [env.CORS_ORIGIN];
+
 export const auth = betterAuth({
-    database: drizzleAdapter(db, { provider: "pg" }),
-    socialProviders: {
-        github: {
-            clientId: env.GITHUB_CLIENT_ID,
-            clientSecret: env.GITHUB_CLIENT_SECRET,
-        }
+  appName: "Gitalyser",
+  database: drizzleAdapter(db, { provider: "pg" }),
+  socialProviders: {
+    github: {
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
     },
-    emailAndPassword: {
-        enabled: false,
+  },
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["github"],
     },
-    trustedOrigins: [env.CORS_ORIGIN],
-    advanced: {
-        useSecureCookies: env.NODE_ENV === "production",
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5,
     },
-    rateLimit: {
-        window: 60, // 60 seconds
-        max: 100, // 100 requests per window
+  },
+  rateLimit: {
+    enabled: false,
+  },
+  trustedOrigins,
+  advanced: {
+    useSecureCookies: env.NODE_ENV === "production",
+    defaultCookieAttributes: {
+      sameSite: env.NODE_ENV === "production" ? "none" : "lax",
+      secure: env.NODE_ENV === "production",
     },
-    session: {
-        expiresIn: 60 * 60 * 24 * 7, // 7 days
-        updateAge: 60 * 60 * 24, // 1 day
-    },
+  },
+  secret: env.BETTER_AUTH_SECRET,
+  baseURL: env.BETTER_AUTH_URL,
 });
