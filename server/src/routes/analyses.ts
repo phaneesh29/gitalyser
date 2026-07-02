@@ -1,21 +1,9 @@
 import { Hono } from 'hono';
-import { requireAuth, type AuthEnv } from '../middleware/auth.js';
-import {
-  createAnalysis,
-  listAnalyses,
-  getAnalysis,
-  refreshAnalysis,
-  deleteAnalysis,
-} from '../controllers/analyses.controller.js';
+import liteRoute from './analyses-lite.js';
 
-const analysesRoute = new Hono<AuthEnv>();
 
-analysesRoute.use('*', requireAuth);
+const analysesRoute = new Hono();
 
-analysesRoute.post('/', ...createAnalysis);
-analysesRoute.get('/', ...listAnalyses);
-analysesRoute.get('/:id', ...getAnalysis);
-analysesRoute.post('/:id/refresh', ...refreshAnalysis);
-analysesRoute.delete('/:id', ...deleteAnalysis);
+analysesRoute.route('/lite', liteRoute);
 
 export default analysesRoute;

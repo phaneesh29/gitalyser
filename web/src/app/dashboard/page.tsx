@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { useSession } from "@/lib/auth-client";
-import { api, timeAgo, type WorkspaceListResponse, type WorkspaceSummary } from "@/lib/api";
+import { api, LITE_BASE, timeAgo, type WorkspaceListResponse, type WorkspaceSummary } from "@/lib/api";
 import { ServerStatus } from "@/components/server-status";
 import { NewAnalysisDialog } from "@/components/new-analysis-dialog";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,7 @@ export default function DashboardPage() {
   const { data, isPending } = useSession();
 
   const [workspaces, setWorkspaces] = useState<WorkspaceSummary[] | null>(null);
+  const [quota, setQuota] = useState(LITE_QUOTA);
 
   // Not signed in → send to the login page.
   useEffect(() => {
@@ -46,8 +47,9 @@ export default function DashboardPage() {
 
   const loadWorkspaces = useCallback(async () => {
     try {
-      const res = await api<WorkspaceListResponse>("/api/analyses");
+      const res = await api<WorkspaceListResponse>(LITE_BASE);
       setWorkspaces(res.workspaces);
+      setQuota(res.quota);
     } catch {
       toast.error("Could not load your workspaces.");
       setWorkspaces([]);
@@ -65,7 +67,7 @@ export default function DashboardPage() {
     };
   }, [data, loadWorkspaces]);
 
-  const liteCount = workspaces?.filter((w) => w.analysisType === "lite_speed").length ?? 0;
+  const liteCount = workspaces?.length ?? 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-[#fafafa]">
@@ -103,7 +105,7 @@ export default function DashboardPage() {
               </h1>
               <p className="mt-2 text-[16px] text-[#4d4d4d]">
                 {liteCount > 0
-                  ? `${liteCount}/${LITE_QUOTA} Lite workspaces used`
+                  ? `${liteCount}/${quota} Lite workspaces used`
                   : "Ready to analyse some code today?"}
               </p>
             </div>

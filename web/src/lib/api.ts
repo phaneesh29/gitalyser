@@ -33,6 +33,9 @@ export async function api<T = unknown>(path: string, opts: RequestInit = {}): Pr
   return body as T;
 }
 
+// API base path for lite workspaces (deep mode comes later at /api/analyses/deep).
+export const LITE_BASE = "/api/analyses/lite";
+
 // ── Shared types (mirror server/src/services/github.ts + controller) ─────────
 export type AnalysisType = "lite_speed" | "deep_research";
 
@@ -51,7 +54,7 @@ export type WorkspaceSummary = {
 
 export type WorkspaceListResponse = {
   workspaces: WorkspaceSummary[];
-  quotas: Record<AnalysisType, number>;
+  quota: number;
 };
 
 export type LiteContext = {

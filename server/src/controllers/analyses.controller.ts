@@ -1,4 +1,4 @@
-import { createFactory } from 'hono/factory';
+import { createFactory, createMiddleware } from 'hono/factory';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { and, count, desc, eq, sql } from 'drizzle-orm';
@@ -7,7 +7,7 @@ import type { Context } from 'hono';
 
 import { db } from '../db/index.js';
 import { analysis } from '../db/schema.js';
-import type { AuthEnv } from '../middleware/auth.js';
+import type { SessionUser } from '../middleware/auth.js';
 import {
   parseRepoInput,
   getUserGithubToken,
@@ -15,20 +15,36 @@ import {
   GithubError,
 } from '../services/github.js';
 
-const factory = createFactory<AuthEnv>();
+type AnalysisType = 'lite_speed' | 'deep_research';
+
+
+export type AnalysisEnv = {
+  Variables: {
+    user: SessionUser;
+    analysisType: AnalysisType;
+  };
+};
+
+const factory = createFactory<AnalysisEnv>();
 
 export const STALE_TTL_MS = 24 * 60 * 60 * 1000;
 
-const QUOTAS: Record<string, number> = {
+const QUOTAS: Record<AnalysisType, number> = {
   lite_speed: 5,
   deep_research: 3,
 };
 
+
+export function withAnalysisType(type: AnalysisType) {
+  return createMiddleware<AnalysisEnv>(async (c, next) => {
+    c.set('analysisType', type);
+    await next();
+  });
+}
+
 const createSchema = z.object({
   input: z.string().min(1),
-  analysisType: z.enum(['lite_speed', 'deep_research']).default('lite_speed'),
 });
-
 
 function handleError(c: Context, err: unknown) {
   if (err instanceof GithubError) {
@@ -45,22 +61,20 @@ export const createAnalysis = factory.createHandlers(
   zValidator('json', createSchema),
   async (c) => {
     const user = c.get('user');
-    const { input, analysisType } = c.req.valid('json');
-
-    if (analysisType === 'deep_research') {
-      return c.json({ error: 'Deep Research mode is coming soon.' }, 501);
-    }
+    const analysisType = c.get('analysisType');
+    const { input } = c.req.valid('json');
 
     try {
       const { owner, repo } = parseRepoInput(input);
       const gitRepo = `${owner}/${repo}`;
+
 
       const [{ value: existingCount }] = await db
         .select({ value: count() })
         .from(analysis)
         .where(and(eq(analysis.userId, user.id), eq(analysis.analysisType, analysisType)));
 
-      if (existingCount >= (QUOTAS[analysisType] ?? 0)) {
+      if (existingCount >= QUOTAS[analysisType]) {
         return c.json(
           { error: `You've reached the limit of ${QUOTAS[analysisType]} ${analysisType} workspaces. Delete one to free a slot.` },
           403,
@@ -104,8 +118,10 @@ export const createAnalysis = factory.createHandlers(
   },
 );
 
+
 export const listAnalyses = factory.createHandlers(async (c) => {
   const user = c.get('user');
+  const analysisType = c.get('analysisType');
 
   const rows = await db
     .select({
@@ -119,7 +135,7 @@ export const listAnalyses = factory.createHandlers(async (c) => {
       derived: sql<Record<string, any>>`${analysis.context}->'derived'`,
     })
     .from(analysis)
-    .where(eq(analysis.userId, user.id))
+    .where(and(eq(analysis.userId, user.id), eq(analysis.analysisType, analysisType)))
     .orderBy(desc(analysis.createdAt));
 
   const workspaces = rows.map((r) => ({
@@ -135,18 +151,20 @@ export const listAnalyses = factory.createHandlers(async (c) => {
     activityStatus: r.derived?.activityStatus ?? null,
   }));
 
-  return c.json({ workspaces, quotas: QUOTAS });
+  return c.json({ workspaces, quota: QUOTAS[analysisType] });
 });
-
 
 export const getAnalysis = factory.createHandlers(async (c) => {
   const user = c.get('user');
+  const analysisType = c.get('analysisType');
   const id = c.req.param('id')!;
 
   const [row] = await db
     .select()
     .from(analysis)
-    .where(and(eq(analysis.id, id), eq(analysis.userId, user.id)))
+    .where(
+      and(eq(analysis.id, id), eq(analysis.userId, user.id), eq(analysis.analysisType, analysisType)),
+    )
     .limit(1);
 
   if (!row) return c.json({ error: 'Workspace not found.' }, 404);
@@ -157,12 +175,15 @@ export const getAnalysis = factory.createHandlers(async (c) => {
 
 export const refreshAnalysis = factory.createHandlers(async (c) => {
   const user = c.get('user');
+  const analysisType = c.get('analysisType');
   const id = c.req.param('id')!;
 
   const [row] = await db
     .select({ id: analysis.id, gitRepo: analysis.gitRepo })
     .from(analysis)
-    .where(and(eq(analysis.id, id), eq(analysis.userId, user.id)))
+    .where(
+      and(eq(analysis.id, id), eq(analysis.userId, user.id), eq(analysis.analysisType, analysisType)),
+    )
     .limit(1);
 
   if (!row) return c.json({ error: 'Workspace not found.' }, 404);
@@ -184,14 +205,16 @@ export const refreshAnalysis = factory.createHandlers(async (c) => {
   }
 });
 
-
 export const deleteAnalysis = factory.createHandlers(async (c) => {
   const user = c.get('user');
+  const analysisType = c.get('analysisType');
   const id = c.req.param('id')!;
 
   const deleted = await db
     .delete(analysis)
-    .where(and(eq(analysis.id, id), eq(analysis.userId, user.id)))
+    .where(
+      and(eq(analysis.id, id), eq(analysis.userId, user.id), eq(analysis.analysisType, analysisType)),
+    )
     .returning({ id: analysis.id });
 
   if (deleted.length === 0) return c.json({ error: 'Workspace not found.' }, 404);

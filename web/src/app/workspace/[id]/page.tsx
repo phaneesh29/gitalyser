@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 import { useSession } from "@/lib/auth-client";
-import { api, ApiError, timeAgo, type Analysis } from "@/lib/api";
+import { api, ApiError, LITE_BASE, timeAgo, type Analysis } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,7 +67,7 @@ export default function WorkspacePage() {
     async (auto = false) => {
       setRefreshing(true);
       try {
-        const a = await api<Analysis>(`/api/analyses/${id}/refresh`, { method: "POST" });
+        const a = await api<Analysis>(`${LITE_BASE}/${id}/refresh`, { method: "POST" });
         setAnalysis(a);
         if (!auto) toast.success("Snapshot refreshed");
       } catch (err) {
@@ -81,7 +81,7 @@ export default function WorkspacePage() {
 
   const load = useCallback(async () => {
     try {
-      const a = await api<Analysis>(`/api/analyses/${id}`);
+      const a = await api<Analysis>(`${LITE_BASE}/${id}`);
       setAnalysis(a);
       setStatus("ready");
       // Stale-while-revalidate: cached snapshot is shown immediately; if it's
@@ -113,7 +113,7 @@ export default function WorkspacePage() {
 
   async function handleDelete() {
     try {
-      await api(`/api/analyses/${id}`, { method: "DELETE" });
+      await api(`${LITE_BASE}/${id}`, { method: "DELETE" });
       toast.success("Workspace deleted");
       router.push("/dashboard");
     } catch {

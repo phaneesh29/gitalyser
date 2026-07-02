@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Zap, Sparkles } from "lucide-react";
 
-import { api, ApiError, type Analysis, type AnalysisType } from "@/lib/api";
+import { api, ApiError, LITE_BASE, type Analysis } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +29,6 @@ export function NewAnalysisDialog({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [mode] = useState<AnalysisType>("lite_speed");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit() {
@@ -41,9 +40,9 @@ export function NewAnalysisDialog({
 
     setSubmitting(true);
     try {
-      const ws = await api<Analysis>("/api/analyses", {
+      const ws = await api<Analysis>(LITE_BASE, {
         method: "POST",
-        body: JSON.stringify({ input: value, analysisType: mode }),
+        body: JSON.stringify({ input: value }),
       });
       toast.success("Workspace created");
       setOpen(false);
