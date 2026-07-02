@@ -1,7 +1,7 @@
 import { createFactory, createMiddleware } from 'hono/factory';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
 import { and, count, desc, eq, sql } from 'drizzle-orm';
+import { createAnalysisSchema, idParamSchema } from '../schemas/analysis.schema.js';
 import { randomUUID } from 'node:crypto';
 import type { Context } from 'hono';
 
@@ -42,10 +42,6 @@ export function withAnalysisType(type: AnalysisType) {
   });
 }
 
-const createSchema = z.object({
-  input: z.string().min(1),
-});
-
 function handleError(c: Context, err: unknown) {
   if (err instanceof GithubError) {
     return c.json({ error: err.message }, err.status as 400);
@@ -58,7 +54,7 @@ function isStale(fetchedAt: Date): boolean {
 }
 
 export const createAnalysis = factory.createHandlers(
-  zValidator('json', createSchema),
+  zValidator('json', createAnalysisSchema),
   async (c) => {
     const user = c.get('user');
     const analysisType = c.get('analysisType');
@@ -154,10 +150,12 @@ export const listAnalyses = factory.createHandlers(async (c) => {
   return c.json({ workspaces, quota: QUOTAS[analysisType] });
 });
 
-export const getAnalysis = factory.createHandlers(async (c) => {
+export const getAnalysis = factory.createHandlers(
+  zValidator('param', idParamSchema),
+  async (c) => {
   const user = c.get('user');
   const analysisType = c.get('analysisType');
-  const id = c.req.param('id')!;
+  const { id } = c.req.valid('param');
 
   const [row] = await db
     .select()
@@ -173,10 +171,12 @@ export const getAnalysis = factory.createHandlers(async (c) => {
 });
 
 
-export const refreshAnalysis = factory.createHandlers(async (c) => {
+export const refreshAnalysis = factory.createHandlers(
+  zValidator('param', idParamSchema),
+  async (c) => {
   const user = c.get('user');
   const analysisType = c.get('analysisType');
-  const id = c.req.param('id')!;
+  const { id } = c.req.valid('param');
 
   const [row] = await db
     .select({ id: analysis.id, gitRepo: analysis.gitRepo })
@@ -205,10 +205,12 @@ export const refreshAnalysis = factory.createHandlers(async (c) => {
   }
 });
 
-export const deleteAnalysis = factory.createHandlers(async (c) => {
+export const deleteAnalysis = factory.createHandlers(
+  zValidator('param', idParamSchema),
+  async (c) => {
   const user = c.get('user');
   const analysisType = c.get('analysisType');
-  const id = c.req.param('id')!;
+  const { id } = c.req.valid('param');
 
   const deleted = await db
     .delete(analysis)
