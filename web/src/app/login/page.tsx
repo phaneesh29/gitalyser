@@ -9,14 +9,6 @@ import { useSession } from "@/lib/auth-client";
 import { SignInCard } from "@/components/sign-in-card";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { data, isPending } = useSession();
-
-  // Already signed in → skip the login screen.
-  useEffect(() => {
-    if (!isPending && data) router.replace("/dashboard");
-  }, [isPending, data, router]);
-
   return (
     <div className="flex min-h-full flex-col">
       {/* Vercel-style Nav */}

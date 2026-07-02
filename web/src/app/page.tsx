@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 import {
   Activity,
   ArrowRight,
@@ -53,6 +56,8 @@ const steps = [
 ];
 
 export default function Landing() {
+  const { data: session } = useSession();
+
   return (
     <div className="flex min-h-screen flex-col bg-[#fafafa] selection:bg-[#171717] selection:text-[#f2f2f2]">
       {/* Vercel-style Nav */}
@@ -71,12 +76,20 @@ export default function Landing() {
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <Button asChild variant="ghost" className="h-[32px] rounded-[6px] px-3 text-[14px] font-medium text-[#171717] hover:bg-black/5">
-            <Link href="/login">Log In</Link>
-          </Button>
-          <Button asChild className="h-[32px] rounded-[6px] bg-[#171717] px-3 text-[14px] font-medium text-white hover:bg-[#383838]">
-            <Link href="/login">Sign Up</Link>
-          </Button>
+          {session ? (
+            <Button asChild className="h-[32px] rounded-[6px] bg-[#171717] px-3 text-[14px] font-medium text-white hover:bg-[#383838]">
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button asChild variant="ghost" className="h-[32px] rounded-[6px] px-3 text-[14px] font-medium text-[#171717] hover:bg-black/5">
+                <Link href="/login">Log In</Link>
+              </Button>
+              <Button asChild className="h-[32px] rounded-[6px] bg-[#171717] px-3 text-[14px] font-medium text-white hover:bg-[#383838]">
+                <Link href="/login">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
       </header>
 
@@ -102,8 +115,8 @@ export default function Landing() {
             
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild className="h-[48px] rounded-full bg-[#171717] px-8 text-[16px] font-medium text-white shadow-[0_4px_14px_0_rgb(0,0,0,0.2)] hover:bg-[#383838] hover:shadow-[0_6px_20px_rgba(0,0,0,0.23)] transition-all">
-                <Link href="/login">
-                  Start Deploying <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href={session ? "/dashboard" : "/login"}>
+                  {session ? "Go to Dashboard" : "Get Started"} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild variant="outline" className="h-[48px] rounded-full border-[#ebebeb] bg-white px-8 text-[16px] font-medium text-[#171717] shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:bg-[#fafafa]">
@@ -167,8 +180,8 @@ export default function Landing() {
             
             <div className="mt-20 flex justify-start">
               <Button asChild className="h-[48px] rounded-full bg-white px-8 text-[16px] font-medium text-[#171717] hover:bg-[#ebebeb]">
-                <Link href="/login">
-                  Analyse your first repo
+                <Link href={session ? "/dashboard" : "/login"}>
+                  {session ? "Go to Dashboard" : "Analyse your first repo"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -197,8 +210,14 @@ export default function Landing() {
             </div>
             <div className="flex flex-col gap-3">
               <span className="mb-2 font-mono text-[12px] uppercase tracking-[0.04em] text-[#a1a1a1]">Platform</span>
-              <Link href="/login" className="text-[14px] text-[#4d4d4d] hover:text-[#171717]">Log In</Link>
-              <Link href="/login" className="text-[14px] text-[#4d4d4d] hover:text-[#171717]">Sign Up</Link>
+              {session ? (
+                <Link href="/dashboard" className="text-[14px] text-[#4d4d4d] hover:text-[#171717]">Dashboard</Link>
+              ) : (
+                <>
+                  <Link href="/login" className="text-[14px] text-[#4d4d4d] hover:text-[#171717]">Log In</Link>
+                  <Link href="/login" className="text-[14px] text-[#4d4d4d] hover:text-[#171717]">Sign Up</Link>
+                </>
+              )}
             </div>
           </div>
         </div>
