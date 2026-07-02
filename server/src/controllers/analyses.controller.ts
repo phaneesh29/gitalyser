@@ -12,8 +12,8 @@ import {
   parseRepoInput,
   getUserGithubToken,
   fetchLiteContext,
-  GithubError,
 } from '../services/github.js';
+import { handleError, isStale } from '../helpers/analyses.helper.js';
 
 type AnalysisType = 'lite_speed' | 'deep_research';
 
@@ -27,8 +27,6 @@ export type AnalysisEnv = {
 
 const factory = createFactory<AnalysisEnv>();
 
-export const STALE_TTL_MS = 24 * 60 * 60 * 1000;
-
 const QUOTAS: Record<AnalysisType, number> = {
   lite_speed: 5,
   deep_research: 3,
@@ -40,17 +38,6 @@ export function withAnalysisType(type: AnalysisType) {
     c.set('analysisType', type);
     await next();
   });
-}
-
-function handleError(c: Context, err: unknown) {
-  if (err instanceof GithubError) {
-    return c.json({ error: err.message }, err.status as 400);
-  }
-  throw err;
-}
-
-function isStale(fetchedAt: Date): boolean {
-  return Date.now() - new Date(fetchedAt).getTime() > STALE_TTL_MS;
 }
 
 export const createAnalysis = factory.createHandlers(
