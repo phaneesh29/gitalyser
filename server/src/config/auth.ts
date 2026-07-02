@@ -38,6 +38,9 @@ export const auth = betterAuth({
   },
   trustedOrigins,
   advanced: {
+    ipAddress: {
+      ipAddressHeaders: ["x-forwarded-for", "x-real-ip"],
+    },
     useSecureCookies: env.NODE_ENV === "production",
     defaultCookieAttributes: {
       sameSite: env.NODE_ENV === "production" ? "none" : "lax",
