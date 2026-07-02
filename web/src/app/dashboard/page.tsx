@@ -21,10 +21,10 @@ export default function DashboardPage() {
   }, [isPending, data, router]);
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-card/80 px-6 backdrop-blur-sm">
-        <Link href="/" className="text-lg font-semibold tracking-[-0.02em]">
-          Gitalyser<span className="text-[#888]">.</span>
+    <div className="flex min-h-screen flex-col bg-[#fafafa]">
+      <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-[#ebebeb] bg-white/80 px-6 backdrop-blur-md">
+        <Link href="/" className="text-[16px] font-semibold tracking-[-0.02em] text-[#171717]">
+          Gitalyser<span className="text-[#888888]">.</span>
         </Link>
         <ServerStatus />
       </header>

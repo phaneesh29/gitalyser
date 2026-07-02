@@ -49,38 +49,41 @@ export function SignInCard() {
   }
 
   return (
-    <Card className="relative z-10 w-full max-w-md gap-6 py-8 shadow-float">
-      <CardHeader className="text-center">
-        <p className="eyebrow mb-3">Gitalyser</p>
-        <CardTitle className="text-2xl tracking-[-0.04em]">
+    <Card className="relative z-10 w-full max-w-[480px] gap-6 rounded-[12px] border border-[#ebebeb] bg-white p-10 shadow-[0_1px_1px_rgba(0,0,0,0.02),0_8px_16px_-4px_rgba(0,0,0,0.04),0_24px_32px_-8px_rgba(0,0,0,0.04)] sm:p-12">
+      <div className="mb-8 text-center">
+        <span className="mb-4 block font-mono text-[12px] uppercase tracking-[0.04em] text-[#888888]">
+          Gitalyser
+        </span>
+        <h1 className="mb-3 text-[32px] font-semibold tracking-[-1.28px] text-[#171717]">
           Sign in to continue.
-        </CardTitle>
-        <CardDescription className="text-balance">
+        </h1>
+        <p className="text-[16px] leading-relaxed text-[#4d4d4d]">
           Connect your GitHub account to start analysing repositories.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-start space-x-2">
+        </p>
+      </div>
+      <div className="space-y-8">
+        <div className="flex items-start space-x-3 rounded-[8px] border border-[#ebebeb] bg-[#fafafa] p-4">
           <Checkbox 
             id="terms" 
             checked={termsAccepted}
             onCheckedChange={(checked) => setTermsAccepted(checked === true)}
             disabled={loading}
+            className="mt-1"
           />
-          <div className="grid gap-1.5 leading-none">
+          <div className="grid gap-1.5">
             <label
               htmlFor="terms"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-[14px] font-medium leading-none text-[#171717] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Accept terms and conditions
             </label>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-[14px] leading-relaxed text-[#888888]">
               By continuing, you agree to our{" "}
-              <Link href="/terms" className="underline hover:text-primary">
+              <Link href="/terms" className="text-[#171717] underline decoration-[#ebebeb] underline-offset-4 hover:decoration-[#171717]">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline hover:text-primary">
+              <Link href="/privacy" className="text-[#171717] underline decoration-[#ebebeb] underline-offset-4 hover:decoration-[#171717]">
                 Privacy Policy
               </Link>
               .
@@ -88,19 +91,18 @@ export function SignInCard() {
           </div>
         </div>
         <Button
-          className="w-full"
-          size="lg"
+          className="flex h-[48px] w-full items-center justify-center gap-3 rounded-[6px] bg-[#171717] text-[16px] font-medium text-white shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] transition-colors hover:bg-[#383838]"
           onClick={handleSignIn}
           disabled={loading}
         >
           {loading ? (
-            <Loader2 className="animate-spin" />
+            <Loader2 className="animate-spin text-white" size={18} />
           ) : (
-            <GithubIcon className="size-4" />
+            <GithubIcon className="size-5" />
           )}
           Continue with GitHub
         </Button>
-      </CardContent>
+      </div>
     </Card>
   );
 }
