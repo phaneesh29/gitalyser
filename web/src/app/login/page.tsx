@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   // Already signed in → skip the login screen.
   useEffect(() => {
-    if (!isPending && data) router.replace("/settings");
+    if (!isPending && data) router.replace("/dashboard");
   }, [isPending, data, router]);
 
   return (

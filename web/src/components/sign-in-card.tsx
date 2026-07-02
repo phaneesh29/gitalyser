@@ -37,7 +37,7 @@ export function SignInCard() {
     await signIn.social(
       {
         provider: "github",
-        callbackURL: `${window.location.origin}/settings`,
+        callbackURL: `${window.location.origin}/dashboard`,
       },
       {
         onError: ({ error }) => {
