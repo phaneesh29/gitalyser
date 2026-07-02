@@ -11,7 +11,7 @@ import { SessionsCard } from "@/components/sessions-card";
 import { DangerZone } from "@/components/danger-zone";
 import { ServerStatus } from "@/components/server-status";
 
-export default function DashboardPage() {
+export default function SettingsPage() {
   const router = useRouter();
   const { data, isPending } = useSession();
 

@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   // Already signed in → skip the login screen.
   useEffect(() => {
-    if (!isPending && data) router.replace("/dashboard");
+    if (!isPending && data) router.replace("/settings");
   }, [isPending, data, router]);
 
   return (
@@ -30,11 +30,7 @@ export default function LoginPage() {
 
       <main className="relative flex flex-1 items-center justify-center overflow-hidden px-6">
         <div className="mesh-hero pointer-events-none absolute inset-x-0 top-0 h-[65%]" />
-        {isPending || data ? (
-          <Loader2 className="size-6 animate-spin text-muted-foreground" />
-        ) : (
-          <SignInCard />
-        )}
+        <SignInCard />
       </main>
     </div>
   );
