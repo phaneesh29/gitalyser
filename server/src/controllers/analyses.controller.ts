@@ -21,12 +21,12 @@ export const STALE_TTL_MS = 24 * 60 * 60 * 1000;
 
 const QUOTAS: Record<string, number> = {
   lite_speed: 5,
-  deep_mode: 3,
+  deep_research: 3,
 };
 
 const createSchema = z.object({
   input: z.string().min(1),
-  analysisType: z.enum(['lite_speed', 'deep_mode']).default('lite_speed'),
+  analysisType: z.enum(['lite_speed', 'deep_research']).default('lite_speed'),
 });
 
 
@@ -47,7 +47,7 @@ export const createAnalysis = factory.createHandlers(
     const user = c.get('user');
     const { input, analysisType } = c.req.valid('json');
 
-    if (analysisType === 'deep_mode') {
+    if (analysisType === 'deep_research') {
       return c.json({ error: 'Deep Research mode is coming soon.' }, 501);
     }
 

@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   pgTable,
+  pgEnum,
   text,
   timestamp,
   boolean,
@@ -8,6 +9,8 @@ import {
   index,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+
+export const analysisTypeEnum = pgEnum("analysis_type", ["lite_speed", "deep_research"]);
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -88,7 +91,7 @@ export const analysis = pgTable(
     id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
     gitRepo: text("git_repo").notNull(),
-    analysisType: text("analysis_type").notNull(), 
+    analysisType: analysisTypeEnum("analysis_type").notNull(),
     context: jsonb("context").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     fetchedAt: timestamp("fetched_at").defaultNow().notNull(), 

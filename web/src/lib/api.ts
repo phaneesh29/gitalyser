@@ -34,7 +34,7 @@ export async function api<T = unknown>(path: string, opts: RequestInit = {}): Pr
 }
 
 // ── Shared types (mirror server/src/services/github.ts + controller) ─────────
-export type AnalysisType = "lite_speed" | "deep_mode";
+export type AnalysisType = "lite_speed" | "deep_research";
 
 export type WorkspaceSummary = {
   id: string;

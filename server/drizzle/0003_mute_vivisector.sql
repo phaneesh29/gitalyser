@@ -1,0 +1,2 @@
+CREATE TYPE "public"."analysis_type" AS ENUM('lite_speed', 'deep_research');--> statement-breakpoint
+ALTER TABLE "analysis" ALTER COLUMN "analysis_type" SET DATA TYPE "public"."analysis_type" USING "analysis_type"::"public"."analysis_type";
