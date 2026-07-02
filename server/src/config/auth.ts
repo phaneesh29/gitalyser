@@ -11,4 +11,19 @@ export const auth = betterAuth({
             clientSecret: env.GITHUB_CLIENT_SECRET,
         }
     },
+    emailAndPassword: {
+        enabled: false,
+    },
+    trustedOrigins: [env.CORS_ORIGIN],
+    advanced: {
+        useSecureCookies: env.NODE_ENV === "production",
+    },
+    rateLimit: {
+        window: 60, // 60 seconds
+        max: 100, // 100 requests per window
+    },
+    session: {
+        expiresIn: 60 * 60 * 24 * 7, // 7 days
+        updateAge: 60 * 60 * 24, // 1 day
+    },
 });
