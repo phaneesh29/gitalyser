@@ -15,6 +15,13 @@
       "when": 1782982314078,
       "tag": "0001_redundant_nomad",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783003556012,
+      "tag": "0002_familiar_wither",
+      "breakpoints": true
     }
   ]
 }

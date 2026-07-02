@@ -1,5 +1,13 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  jsonb,
+  index,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -74,9 +82,38 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
+export const analysis = pgTable(
+  "analysis",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    gitRepo: text("git_repo").notNull(),
+    analysisType: text("analysis_type").notNull(), 
+    context: jsonb("context").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    fetchedAt: timestamp("fetched_at").defaultNow().notNull(), 
+  },
+  (table) => [
+    uniqueIndex("analysis_user_repo_type_idx").on(
+      table.userId,
+      table.gitRepo,
+      table.analysisType,
+    ),
+    index("analysis_userId_idx").on(table.userId),
+  ],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  analyses: many(analysis),
+}));
+
+export const analysisRelations = relations(analysis, ({ one }) => ({
+  user: one(user, {
+    fields: [analysis.userId],
+    references: [user.id],
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
